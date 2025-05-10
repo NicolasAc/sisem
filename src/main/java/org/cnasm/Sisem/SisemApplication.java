@@ -12,7 +12,7 @@ public class SisemApplication {
 		SpringApplication.run(SisemApplication.class, args);
 
 		// Solo para generar una contraseña encriptada y copiarla desde log
-		String rawPassword = "admin"; // ramaLoginm
+		String rawPassword = "admin"; // ramaLoginm1
 		String hash = new BCryptPasswordEncoder().encode(rawPassword);
 		System.out.println("Hashed password: " + hash);
 	}
