@@ -11,8 +11,8 @@ public class SisemApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SisemApplication.class, args);
 
-		// Solo para generar una contraseña encriptada y copiarla en tu base de datos
-		String rawPassword = "admin"; // o la que quieras
+		// Solo para generar una contraseña encriptada y copiarla desde log
+		String rawPassword = "admin"; // rama1
 		String hash = new BCryptPasswordEncoder().encode(rawPassword);
 		System.out.println("Hashed password: " + hash);
 	}
