@@ -3,6 +3,7 @@ package org.cnasm.Sisem.security;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,43 +31,45 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Paso 1: Leer el encabezado Authorization
-        final String authHeader = request.getHeader("Authorization");
-
+        System.out.println(">>> Método real: " + request.getMethod() + " - URI: " + request.getRequestURI());
         String jwtToken = null;
         String username = null;
 
-        // Paso 2: Verificar que el header tenga formato Bearer y extraer el token
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            jwtToken = authHeader.substring(7); // Quita el "Bearer "
+        // ✅ Paso 1: Buscar token en las cookies
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("token".equals(cookie.getName())) {
+                    jwtToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
 
+        // ✅ Paso 2: Si se encontró token, intentar autenticar
+        if (jwtToken != null) {
             try {
-                // Paso 3: Parsear el token y extraer los claims
                 Claims claims = jwtTokenUtil.parseClaims(jwtToken);
-                username = claims.getSubject(); // Este es el username
+                username = claims.getSubject();
 
-                // Paso 4: Leer los roles desde el claim "roles"
                 @SuppressWarnings("unchecked")
                 List<String> roles = claims.get("roles", List.class);
 
-                // Paso 5: Convertir roles en authorities reconocidas por Spring
                 List<SimpleGrantedAuthority> authorities = roles.stream()
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-                // Paso 6: Construir el objeto Authentication con username y roles
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(username, null, authorities);
 
-                // Paso 7: Guardar el Authentication en el contexto de seguridad
+                System.out.println(">>> AUTENTICANDO: " + username);
                 SecurityContextHolder.getContext().setAuthentication(authToken);
 
             } catch (Exception e) {
                 System.out.println("Token inválido o mal formado: " + e.getMessage());
             }
         }
-
-        // Paso 8: Continuar con el resto de la cadena de filtros
+        System.out.println("Paso la validacion del token");
+        // Continuar con la cadena de filtros
         filterChain.doFilter(request, response);
     }
 }

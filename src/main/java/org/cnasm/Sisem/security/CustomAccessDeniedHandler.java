@@ -16,7 +16,9 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                        HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        System.out.println("CustomAccessDeniedHander bloqueo" );
         response.setContentType("application/json");
         response.getWriter().write("{\"error\": \"No tenés permiso para acceder a este recurso.\"}");
+
     }
 }

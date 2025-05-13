@@ -16,7 +16,7 @@ public class JwtTokenUtil {
     private static final String SECRET_KEY = "G9df3kZP8m2XLrQ0BnA5uYvCwTz1EeHyUkLoIxMsQpN7RbVcJaKhZdFgWtSyXqM1";
 
     // Tiempo de expiración del token: 1 día
-    private static final long EXPIRATION_TIME = 86400000L;
+    private static final long EXPIRATION_TIME = 1800000L; // 30 Minutos de vigencia del token
 
     // Generar el token
     public String generateToken(String username, List<String> roles) {
