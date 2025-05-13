@@ -20,7 +20,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter, CustomAccessDeniedHandler accessDeniedHandler) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                    .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/api/usuarios").permitAll() //SOLO PUREBAAAAA
