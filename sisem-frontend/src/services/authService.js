@@ -9,6 +9,7 @@ export const login = async (username, password) => {
   }, {
     withCredentials: true // para recibir cookies de backend
   });
+    console.log("login:", response.data);
   return response.data;
 };
 
@@ -16,4 +17,5 @@ export const logout = async () => {
   return await axios.post(`${API_URL}/logout`, null, {
     withCredentials: true
   });
+  console.log("Se realiza logout",);
   };

@@ -20,7 +20,7 @@ public class UsuarioService {
 
     public List<UsuarioResponse> listarUsuarios() {
         return repo.findAll().stream()
-                .map(u -> new UsuarioResponse(u.getId(), u.getUsername()))
+                .map(u -> new UsuarioResponse(u.getId(), u.getUsername(),u.getNombre(),u.getApellido(),u.getNroCcjpu(),u.getEmail(),u.getFuncion(),u.isActivo()))
                 .collect(Collectors.toList());
     }
 }

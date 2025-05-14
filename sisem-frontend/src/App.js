@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import UsuariosPage from './pages/UsuariosPage';
 
 
 import Layout from './layout/Layout';
@@ -20,11 +21,14 @@ function App() {
       element={
         <PrivateRoute>
           <Layout />
+
         </PrivateRoute>
       }
     >
+
       <Route path="dashboard" element={<DashboardPage />} />
       <Route path="personas" element={<DashboardPage />} />
+      <Route path="usuarios" element={<UsuariosPage />} />
       {/* Podés agregar más rutas anidadas acá */}
     </Route>
 
