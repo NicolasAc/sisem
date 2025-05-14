@@ -1,16 +1,37 @@
 import React from 'react';
+import { Navigate } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+
+
+import Layout from './layout/Layout';
+import PrivateRoute from './routes/PrivateRoute';
 
 function App() {
   return (
- <Router>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        {/* Agregaremos más rutas luego */}
-      </Routes>
-    </Router>
-  );
+<Routes>
+    {/* Rutas públicas */}
+    <Route path="/login" element={<LoginPage />} />
+
+    {/* Rutas protegidas */}
+    <Route
+      path="/"
+      element={
+        <PrivateRoute>
+          <Layout />
+        </PrivateRoute>
+      }
+    >
+      <Route path="dashboard" element={<DashboardPage />} />
+      <Route path="personas" element={<DashboardPage />} />
+      {/* Podés agregar más rutas anidadas acá */}
+    </Route>
+
+    {/* Catch-all */}
+    <Route path="*" element={<Navigate to="/login" />} />
+  </Routes>
+);
 }
 
 export default App;

@@ -11,3 +11,9 @@ export const login = async (username, password) => {
   });
   return response.data;
 };
+
+export const logout = async () => {
+  return await axios.post(`${API_URL}/logout`, null, {
+    withCredentials: true
+  });
+  };

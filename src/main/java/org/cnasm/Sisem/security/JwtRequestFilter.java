@@ -62,7 +62,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(username, null, authorities);
 
                 System.out.println(">>> AUTENTICANDO: " + username);
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                SecurityContextHolder.getContext().setAuthentication(authToken); //Seteo el usuario en el contexto sping habilitando anotaciones de seguridad por rol para endponts
 
             } catch (Exception e) {
                 System.out.println("Token inválido o mal formado: " + e.getMessage());
