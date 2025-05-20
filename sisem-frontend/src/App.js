@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import UsuariosPage from './pages/UsuariosPage';
+import UsuarioNuevoPage from './pages/UsuarioNuevoPage';
 
 
 import Layout from './layout/Layout';
@@ -29,6 +30,7 @@ function App() {
       <Route path="dashboard" element={<DashboardPage />} />
       <Route path="personas" element={<DashboardPage />} />
       <Route path="usuarios" element={<UsuariosPage />} />
+      <Route path="/usuarios/nuevo" element={<UsuarioNuevoPage />} />
       {/* Podés agregar más rutas anidadas acá */}
     </Route>
 

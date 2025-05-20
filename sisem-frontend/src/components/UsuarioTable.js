@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { useNavigate } from 'react-router-dom';
-import { BsPencilSquare } from 'react-icons/bs';
+import { BsPencilSquare , BsPlusCircle  } from 'react-icons/bs';
 
 const UsuarioTable = ({ usuarios }) => {
   const [filtro, setFiltro] = useState('');
   const navigate = useNavigate();
+
+    const capitalizar = (texto) =>
+      texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
 
   const columnas = [
     { name: 'Usuario', selector: row => row.username, sortable: true },
@@ -13,7 +16,7 @@ const UsuarioTable = ({ usuarios }) => {
     { name: 'Nombre', selector: row => row.nombre, sortable: true },
     { name: 'Apellido', selector: row => row.apellido, sortable: true },
     { name: 'Email', selector: row => row.email, sortable: true },
-    { name: 'Eliminado', selector: row => row.activo ? 'NO' : 'SI', sortable: true },
+    { name: 'Eliminado', selector: row => capitalizar(row.estado), sortable: true },
      {
        name: 'Acciones',
        center: true, // Centra el contenido de la celda
@@ -62,12 +65,21 @@ const UsuarioTable = ({ usuarios }) => {
         selectAllRowsItem: false,
       }}
       subHeaderComponent={
-        <input
-          type="text"
-          placeholder="Buscar..."
-          onChange={(e) => setFiltro(e.target.value)}
-          className="form-control w-25"
-        />
+ <div className="d-flex justify-content-between align-items-center w-100">
+    <input
+      type="text"
+      placeholder="Buscar..."
+      onChange={(e) => setFiltro(e.target.value)}
+      className="form-control w-25"
+    />
+    <button
+      className="btn btn-outline-success d-flex align-items-center"
+      onClick={() => navigate('/usuarios/nuevo')}
+    >
+      <BsPlusCircle className="me-2" size={18} />
+      Nuevo usuario
+    </button>
+  </div>
       }
       noDataComponent={<span className="text-muted">No se encontraron usuarios</span>}
     />

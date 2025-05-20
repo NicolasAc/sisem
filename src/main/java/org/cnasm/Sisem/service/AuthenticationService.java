@@ -1,15 +1,16 @@
 package org.cnasm.Sisem.service;
 
+import org.cnasm.Sisem.domain.EstadoUsuario;
 import org.cnasm.Sisem.domain.Usuario;
 import org.cnasm.Sisem.repository.UsuarioRepository;
 import org.cnasm.Sisem.security.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AuthenticationService {
@@ -23,23 +24,32 @@ public class AuthenticationService {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    private boolean coincide;
-
     public String authenticate(String username, String password) {
         Usuario usuario = usuarioRepository.findByUsername(username);
 
-        if (usuario != null && passwordEncoder.matches(password, usuario.getPassword())) {
-            //Agregar a Usuario una funcion que pase sus roles con formato requerido por Spring
-            List<String> roles = usuario.getRoles().stream()
-                    .map(r -> "ROLE_" + r.getNombre().toUpperCase())
-                    .toList();
-            System.out.println("Autenticacion exitosa: " + username);
-            return jwtTokenUtil.generateToken(username,roles);
+        if (usuario == null) {
+            throw new BadCredentialsException("Usuario o contraseña inválidos");
         }
 
-        System.out.println("Autenticacion fallida para: " + username);
-        return null;
+        if (usuario.getEstado() == EstadoUsuario.PENDIENTE) {
+            throw new DisabledException("El usuario aún no activó su cuenta.");
+        }
+
+        if (usuario.getEstado() == EstadoUsuario.DESHABILITADO) {
+            throw new DisabledException("El usuario está deshabilitado.");
+        }
+
+        if (!passwordEncoder.matches(password, usuario.getPassword())) {
+            throw new BadCredentialsException("Usuario o contraseña inválidos");
+        }
+
+        List<String> roles = usuario.getRoles().stream()
+                .map(r -> "ROLE_" + r.getNombre().toUpperCase())
+                .toList();
+
+        return jwtTokenUtil.generateToken(username, roles);
     }
+
     public Usuario buscarPorUsername(String username) {
         return usuarioRepository.findByUsername(username);
     }

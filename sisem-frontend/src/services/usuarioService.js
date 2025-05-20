@@ -10,3 +10,10 @@ export const getUsuarios = async () => {
   console.log("getUsuarios:", response.data);
   return response.data; // lista de usuarios
 };
+
+export const crearUsuario = async (usuario) => {
+  const response = await axios.post(`${API_URL}/api/usuarios`, usuario, {
+    withCredentials: true
+  });
+  return response.data;
+};

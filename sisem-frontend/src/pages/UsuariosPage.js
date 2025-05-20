@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { getUsuarios } from '../services/usuarioService';
 import UsuarioTable from '../components/UsuarioTable';
 
+
 const UsuariosPage = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [error, setError] = useState(null);
+
 
   useEffect(() => {
     const fetchUsuarios = async () => {
@@ -23,12 +25,14 @@ const UsuariosPage = () => {
   return (
     <div className="container-fluid">
 
-      {error ? (
-        <p className="text-danger">{error}</p>
-      ) : (
-        <UsuarioTable usuarios={usuarios} />
-      )}
-    </div>
+       {error ? (
+            <p className="text-danger">{error}</p>
+          ) : (
+            <>
+              <UsuarioTable usuarios={usuarios} />
+            </>
+          )}
+        </div>
   );
 };
 

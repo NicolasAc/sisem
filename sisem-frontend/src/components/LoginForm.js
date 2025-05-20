@@ -11,17 +11,22 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const { login: loginContext, logout, isAuthenticated } = useAuth();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const data = await loginService(username, password); // llamada al backend
-      loginContext({ username: data.username, roles: data.roles }); // guardar en contexto
-      console.log("Respuesta del back sobre Usuario, cargado en contexto:", data);
-      navigate('/dashboard'); // redirigir
-    } catch (err) {
-      setError('Usuario o contraseña inválidos');
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const data = await loginService(username, password); // llamada al backend
+    loginContext({ username: data.username, roles: data.roles }); // guardar en contexto
+    console.log("Respuesta del back sobre Usuario, cargado en contexto:", data);
+    navigate('/dashboard'); // redirigir
+  } catch (err) {
+    // ✅ Si el backend devolvió un mensaje, lo usamos
+    if (err.response && err.response.data) {
+      setError(err.response.data); // espera texto plano como "Usuario deshabilitado..."
+    } else {
+      setError('Error al intentar iniciar sesión');
     }
-  };
+  }
+};
 
   const handleLogout = async () => {
     await logout(); // usa el contexto

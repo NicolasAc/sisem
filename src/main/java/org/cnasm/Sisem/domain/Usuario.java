@@ -31,7 +31,7 @@ public class Usuario {
     @Column(nullable = false)
     private String apellido;
 
-    @Column(name = "nro_ccjpu", length = 7)
+    @Column(name = "nro_ccjpu", length = 7,nullable = false)
     private String nroCcjpu;
 
     @Column(nullable = false)
@@ -40,8 +40,9 @@ public class Usuario {
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean activo = true;
+    private EstadoUsuario estado = EstadoUsuario.PENDIENTE;
 
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime fechaCreacion = LocalDateTime.now();
@@ -52,7 +53,7 @@ public class Usuario {
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "rol_id")
     )
-    private Set<Rol> roles = new HashSet<>();
+    private Set<Rol> roles = new HashSet<>(); //Set lista sin duplicados, JPA lo reconoce, evita duplicados
 
     public List<String> getRolesParaAuthorities() {
         return roles.stream()
