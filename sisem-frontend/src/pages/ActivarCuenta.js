@@ -1,45 +1,62 @@
-import { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { activarCuenta } from '../services/usuarioService';
 
-export default function ActivarCuenta() {
-  const [mensaje, setMensaje] = useState('🔄 Verificando el token...');
-  const [exito, setExito] = useState(false);
-  const [params] = useSearchParams();
+const ActivarCuenta = () => {
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get('token');
+  const [password, setPassword] = useState('');
+  const [estado, setEstado] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = params.get('token');
-    if (!token || token.trim() === '') {
-      setMensaje('❌ Token no proporcionado');
-      return; // Corta el efecto, no intenta activar
-    }
+  const handleActivar = async () => {
+    try {
+      const resultado = await activarCuenta({ token, password });
+      setEstado({ tipo: 'ok', mensaje: resultado });
+      // Podés redirigir después de un segundo
+      setTimeout(() => navigate('/login'), 2000);
+    } catch (error) {
+      const data = error.response?.data;
 
-    axios.get('/api/cuenta/activar', { params: { token } })
-      .then(() => {
-        setMensaje('✅ Cuenta activada correctamente. Redirigiendo al login...');
-        setExito(true);
-        setTimeout(() => navigate('/login'), 4000);
-      })
-      .catch(err => {
-        if (err.response?.status === 401) {
-          setMensaje('⚠️ El token expiró o no es válido.');
-        } else if (err.response?.status === 404) {
-          setMensaje('⚠️ Usuario no encontrado.');
-        } else {
-          setMensaje('❌ Error al activar la cuenta.');
-        }
-      });
-  }, [params, navigate]);
+      let mensajeFormateado;
+
+      if (typeof data === 'string') {
+        mensajeFormateado = data;
+      } else if (typeof data === 'object' && data !== null) {
+        mensajeFormateado = Object.values(data);
+      } else {
+        mensajeFormateado = 'Error inesperado';
+      }
+
+      setEstado({ tipo: 'error', mensaje: mensajeFormateado });
+    }
+  };
 
   return (
-    <div className="container text-center mt-5">
-      <h2>{mensaje}</h2>
-      {!exito && (
-        <button className="btn btn-primary mt-3" onClick={() => navigate('/login')}>
-          Ir al Login
-        </button>
+    <div className="container mt-5">
+      <h2>Activar Cuenta</h2>
+
+      {estado && (
+        <div className={`alert alert-${estado.tipo === 'ok' ? 'success' : 'danger'}`}>
+          {Array.isArray(estado.mensaje)
+            ? estado.mensaje.map((msg, i) => <div key={i}>{msg}</div>)
+            : estado.mensaje}
+        </div>
       )}
+
+      <input
+        type="password"
+        className="form-control mb-3"
+        placeholder="Nueva contraseña"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+
+      <button className="btn btn-primary" onClick={handleActivar}>
+        Activar
+      </button>
     </div>
   );
-}
+};
+
+export default ActivarCuenta;

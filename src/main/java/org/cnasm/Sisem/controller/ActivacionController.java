@@ -1,5 +1,6 @@
 package org.cnasm.Sisem.controller;
 
+import jakarta.validation.Valid;
 import org.cnasm.Sisem.domain.EstadoUsuario;
 import org.cnasm.Sisem.domain.Usuario;
 import org.cnasm.Sisem.dto.ActivacionRequest;
@@ -7,6 +8,7 @@ import org.cnasm.Sisem.repository.UsuarioRepository;
 import org.cnasm.Sisem.security.JwtTokenUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,10 +17,12 @@ public class ActivacionController {
 
     private final UsuarioRepository usuarioRepository;
     private final JwtTokenUtil jwtTokenUtil;
+    private final PasswordEncoder passwordEncoder;
 
-    public ActivacionController(UsuarioRepository usuarioRepository, JwtTokenUtil jwtTokenUtil) {
+    public ActivacionController(UsuarioRepository usuarioRepository, JwtTokenUtil jwtTokenUtil,PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.jwtTokenUtil = jwtTokenUtil;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/activar")
@@ -46,7 +50,7 @@ public class ActivacionController {
     }
 
     @PostMapping("/activar")
-    public ResponseEntity<?> activarCuenta(@RequestBody ActivacionRequest request) {
+    public ResponseEntity<?> activarCuenta(@RequestBody @Valid ActivacionRequest request) {
         String token = request.getToken();
         String nuevaPassword = request.getPassword();
 
@@ -73,8 +77,8 @@ public class ActivacionController {
             return ResponseEntity.badRequest().body("El usuario ya está activado");
         }
 
-        /*usuario.setPassword(passwordEncoder.encode(nuevaPassword));
-        usuario.setEstado(EstadoUsuario.ACTIVO);*/
+        usuario.setPassword(passwordEncoder.encode(nuevaPassword));
+        usuario.setEstado(EstadoUsuario.ACTIVO);
         usuarioRepository.save(usuario);
 
         return ResponseEntity.ok("Cuenta activada correctamente");

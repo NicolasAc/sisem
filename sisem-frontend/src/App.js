@@ -16,6 +16,7 @@ function App() {
 <Routes>
     {/* Rutas públicas */}
     <Route path="/login" element={<LoginPage />} />
+    <Route path="activar" element={<ActivarCuenta />} />
 
     {/* Rutas protegidas */}
     <Route
@@ -31,9 +32,6 @@ function App() {
       <Route path="dashboard" element={<DashboardPage />} />
       <Route path="personas" element={<DashboardPage />} />
       <Route path="usuarios" element={<UsuariosPage />} />
-      <Route path="/activar" element={<ActivarCuenta />} />
-      <Route path="activar" element={<ActivarCuenta />} />
-
 
       <Route path="/usuarios/nuevo" element={<UsuarioNuevoPage />} />
       {/* Podés agregar más rutas anidadas acá */}

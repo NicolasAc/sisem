@@ -17,3 +17,14 @@ export const crearUsuario = async (usuario) => {
   });
   return response.data;
 };
+
+export const activarCuenta = async ({ token, password }) => {
+  const response = await axios.post(`${API_URL}/api/cuenta/activar`, {
+    token,
+    password
+  }, {
+    withCredentials: false // no necesitas cookies en esta llamada
+  });
+
+  return response.data;
+};

@@ -30,6 +30,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/api/usuarios").permitAll() //SOLO PUREBAAAAA
+                        .requestMatchers("/api/cuenta/activar").permitAll()
                         .anyRequest().authenticated()
 
                 ) .logout(logout -> logout.disable()) //  Spring Security, por defecto, reserva y controla el endpoint /logout

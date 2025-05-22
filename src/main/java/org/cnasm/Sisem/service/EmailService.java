@@ -18,11 +18,14 @@ public class EmailService {
         String cuerpo = "Bienvenido. Haga clic en el siguiente enlace para activar su cuenta:\n\n" +
                 "http://localhost:3000//activar?token=" + tokenActivacion;
 
-        SimpleMailMessage mensaje = new SimpleMailMessage();
+        String enlaceActivacion = "http://localhost:3000/activar?token=" + tokenActivacion;
+        System.out.println(" Enlace de activación: " + destinatario + " >>= " + enlaceActivacion);
+
+       /* SimpleMailMessage mensaje = new SimpleMailMessage();
         mensaje.setTo(destinatario);
         mensaje.setSubject(asunto);
         mensaje.setText(cuerpo);
 
-        mailSender.send(mensaje);
+        mailSender.send(mensaje);*/
     }
 }
