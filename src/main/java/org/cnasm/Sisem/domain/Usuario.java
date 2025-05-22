@@ -31,7 +31,7 @@ public class Usuario {
     @Column(nullable = false)
     private String apellido;
 
-    @Column(name = "nro_ccjpu", length = 7,nullable = false)
+    @Column(name = "nro_ccjpu",unique = true, length = 7,nullable = false)
     private String nroCcjpu;
 
     @Column(nullable = false)

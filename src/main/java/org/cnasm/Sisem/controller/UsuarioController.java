@@ -31,18 +31,8 @@ public class UsuarioController {
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PostMapping
     public ResponseEntity<?> crearUsuario(@RequestBody @Valid UsuarioRequest request) {
-        try {
-            UsuarioResponse nuevoUsuario = usuarioService.crearUsuario(request);
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(nuevoUsuario);
-        } catch (IllegalStateException e) {
-            // Ya existe el usuario (username o email duplicado)
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage()); // o body(e.getMessage()) si querés mostrarlo
-        } catch (IllegalArgumentException e) {
-            // Roles inválidos
-            return ResponseEntity.badRequest().body(null);
-        }
+        UsuarioResponse nuevoUsuario = usuarioService.crearUsuario(request); //El servicio es responsable de validar logica de negocio y lanzar exepciones
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
     }
 
 }

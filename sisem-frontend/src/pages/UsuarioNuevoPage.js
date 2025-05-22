@@ -36,13 +36,30 @@ const UsuarioNuevoPage = () => {
 
   const validar = () => {
     const nuevosErrores = {};
+
     if (!form.username.trim()) nuevosErrores.username = 'El nombre de usuario es obligatorio';
+
     if (!form.nombre.trim()) nuevosErrores.nombre = 'El nombre es obligatorio';
+
     if (!form.apellido.trim()) nuevosErrores.apellido = 'El apellido es obligatorio';
-    if (!form.email.trim()) nuevosErrores.email = 'El email es obligatorio';
+
+    if (!form.email.trim()) {
+      nuevosErrores.email = 'El email es obligatorio';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      nuevosErrores.email = 'El email no tiene un formato válido';
+    }
+
     if (!form.funcion.trim()) nuevosErrores.funcion = 'La función es obligatoria';
-    if (!form.nroCcjpu.trim()) nuevosErrores.nroCcjpu = 'El N° CCJPU es obligatorio';
-    if (form.roles.length === 0) nuevosErrores.roles = 'Debes seleccionar al menos un rol';
+
+    if (!form.nroCcjpu.trim()) {
+      nuevosErrores.nroCcjpu = 'El N° CCJPU es obligatorio';
+    } else if (!/^\d{7,8}$/.test(form.nroCcjpu)) {
+      nuevosErrores.nroCcjpu = 'Debe tener exactamente 7 u 8 dígitos numéricos';
+    }
+
+    if (form.roles.length === 0) {
+      nuevosErrores.roles = 'Debes seleccionar al menos un rol';
+    }
 
     setErrors(nuevosErrores);
     return Object.keys(nuevosErrores).length === 0;
@@ -67,6 +84,8 @@ const UsuarioNuevoPage = () => {
 const handleSubmit = async (e) => {
   e.preventDefault();
   setServerError('');
+    setErrors({});
+    setSuccessMessage('');
 
   if (!validar()) return;
 
@@ -85,14 +104,21 @@ const handleSubmit = async (e) => {
     });
 
   } catch (err) {
-    if (err.response?.status === 409) {
-      setServerError(err.response.data || 'El usuario ya existe');
-    } else if (err.response?.status === 400) {
-      setServerError('Uno o más roles no son válidos');
-    } else {
-      setServerError('Error inesperado al crear el usuario');
+      if (err.response?.status === 409) {
+        setServerError(err.response.data || 'El usuario ya existe');
+      } else if (err.response?.status === 400) {
+        // Si viene un objeto con errores campo por campo
+        if (typeof err.response.data === 'object' && !Array.isArray(err.response.data)) {
+          setErrors(err.response.data); // Esto va a rellenar tus errores campo por campo
+          setServerError('Por favor corrige los errores del formulario.');
+        } else {
+          // Si el backend devolvió otro mensaje plano
+          setServerError(err.response.data || 'Error en la solicitud');
+        }
+      } else {
+        setServerError('Error inesperado al crear el usuario');
+      }
     }
-  }
 };
 
   return (

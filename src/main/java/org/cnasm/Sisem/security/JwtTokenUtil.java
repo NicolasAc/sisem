@@ -17,7 +17,7 @@ public class JwtTokenUtil {
 
     // Tiempo de expiración del token: 1 día
     private static final long EXPIRATION_TIME = 1800000L; // 30 Minutos de vigencia del token
-
+    private static final long ACTIVATION_EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 24 horas
     // Generar el token
     public String generateToken(String username, List<String> roles) {
         return Jwts.builder()
@@ -58,5 +58,14 @@ public class JwtTokenUtil {
     public Key getSigningKey() {
         byte[] keyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public String generateActivationToken(String username) {
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + ACTIVATION_EXPIRATION_TIME))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+                .compact();
     }
 }

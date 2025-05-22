@@ -10,7 +10,10 @@ import org.cnasm.Sisem.repository.UsuarioRepository;
 import org.cnasm.Sisem.repository.RolRepository;
 import java.util.Set;
 import java.util.HashSet;
+
+import org.cnasm.Sisem.security.JwtTokenUtil;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,10 +23,14 @@ public class UsuarioService {
 
     private final UsuarioRepository repo;
     private final RolRepository rolRepository;
+    private final EmailService emailService;
+    private final JwtTokenUtil jwtTokenUtil;
 
-    public UsuarioService(UsuarioRepository repo,RolRepository rolRepository) {
+    public UsuarioService(UsuarioRepository repo, RolRepository rolRepository, EmailService emailService, JwtTokenUtil jwtTokenUtil) {
         this.repo = repo;
         this.rolRepository = rolRepository;
+        this.emailService = emailService;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     public List<UsuarioResponse> listarUsuarios() {
@@ -42,6 +49,14 @@ public class UsuarioService {
         if (repo.existsByEmail(request.getEmail())) {
             throw new IllegalStateException("Ya existe un usuario con ese correo electrónico");
         }
+
+        if (repo.existsByNroCcjpu(request.getNroCcjpu())) {
+            throw new IllegalStateException("Ya existe un usuario con ese N° CCJPU");
+        }
+        /*
+        if (request.getNroCcjpu().length() < 7 || request.getNroCcjpu().length() > 8) {
+            throw new IllegalArgumentException("El N° CCJPU debe tener 7 u 8 dígitos");
+        }*/
 
         Set<Rol> roles = new HashSet<>(rolRepository.findByNombreIn(request.getRoles()));
 
@@ -62,6 +77,8 @@ public class UsuarioService {
 
 
         Usuario guardado = repo.save(nuevo);
+        String token = jwtTokenUtil.generateActivationToken(nuevo.getUsername());
+        emailService.enviarCorreoActivacion(nuevo.getEmail(), token);
 
         return new UsuarioResponse(
                 guardado.getId(),
