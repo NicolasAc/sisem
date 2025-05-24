@@ -16,16 +16,16 @@ public class EmailService {
     public void enviarCorreoActivacion(String destinatario, String tokenActivacion) {
         String asunto = "Activación de cuenta - SISEM";
         String cuerpo = "Bienvenido. Haga clic en el siguiente enlace para activar su cuenta:\n\n" +
-                "http://localhost:3000//activar?token=" + tokenActivacion;
+                "http://localhost:3000/activar?token=" + tokenActivacion;
 
         String enlaceActivacion = "http://localhost:3000/activar?token=" + tokenActivacion;
         System.out.println(" Enlace de activación: " + destinatario + " >>= " + enlaceActivacion);
 
-       /* SimpleMailMessage mensaje = new SimpleMailMessage();
+        SimpleMailMessage mensaje = new SimpleMailMessage();
         mensaje.setTo(destinatario);
         mensaje.setSubject(asunto);
         mensaje.setText(cuerpo);
 
-        mailSender.send(mensaje);*/
+        mailSender.send(mensaje);
     }
 }

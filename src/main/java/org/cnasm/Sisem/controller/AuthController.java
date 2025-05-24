@@ -1,5 +1,6 @@
 package org.cnasm.Sisem.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.cnasm.Sisem.domain.Usuario;
 import org.cnasm.Sisem.dto.AuthRequest;
@@ -20,9 +21,10 @@ public class AuthController {
     private AuthenticationService authenticationService;
 
     @PostMapping
-    public ResponseEntity<?> login(@RequestBody AuthRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> login(@RequestBody AuthRequest request, HttpServletResponse response,HttpServletRequest httpRequest) {
         try {
-            String token = authenticationService.authenticate(request.getUsername(), request.getPassword());
+            String ip = obtenerIpCliente(httpRequest);
+            String token = authenticationService.authenticate(request.getUsername(), request.getPassword(),ip);
             Usuario usuario = authenticationService.buscarPorUsername(request.getUsername());
             ResponseCookie cookie = ResponseCookie.from("token", token)
                     .httpOnly(true)
@@ -51,5 +53,15 @@ public class AuthController {
         } catch (DisabledException e) {
             return ResponseEntity.status(403).body(e.getMessage());
         }
+    }
+
+    private String obtenerIpCliente(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty()) {
+            ip = request.getRemoteAddr();
+        } else {
+            ip = ip.split(",")[0].trim();
+        }
+        return ip;
     }
 }

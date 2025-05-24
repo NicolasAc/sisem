@@ -7,6 +7,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 
+import './App.css';
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
  <BrowserRouter> {/* ✅ Envolvés toda la app en el Router */}

@@ -22,17 +22,14 @@ export default function Topbar({ onToggleSidebar }) {
 
   return (
     <nav className="navbar bg-white shadow-sm px-3 d-flex justify-content-between align-items-center">
-      {/* Botón para colapsar sidebar */}
-      <button
-        className="btn btn-outline-primary"
-        onClick={onToggleSidebar}
-        title="Toggle sidebar"
-      >
-        ☰
-      </button>
+      <div className="d-flex align-items-center gap-3">
+         <button
+           className="btn btn-outline-primary"
+           onClick={onToggleSidebar}
+           title="Toggle sidebar"> ☰ </button>
 
-      {/* Título */}
-      <span className="navbar-brand mb-0 fw-bold text-primary">SISEM</span>
+         <h2 className="mb-0 logo-sisem">SISEM</h2>
+       </div>
 
       {/* Dropdown del usuario */}
       <Dropdown align="end">

@@ -53,3 +53,13 @@ body{
 .topbar {
   height: 48px;
 }
+
+.logo-sisem {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: linear-gradient(135deg, #007bff, #00c9a7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent; /* fallback por si no aplica el clip */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}

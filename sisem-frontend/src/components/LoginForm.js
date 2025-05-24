@@ -39,7 +39,7 @@ const handleSubmit = async (e) => {
         onSubmit={handleSubmit}
         style={{ minWidth: 300 }}
       >
-        <h1 className="text-center mb-2 display-4 fw-bold text-primary">SISEM</h1>
+        <h1 className="text-center mb-2 display-4 fw-bold text-primary logo-sisem">SISEM</h1>
         <h2 className="text-center mb-4">Iniciar sesión</h2>
 
         <div className="mb-3">

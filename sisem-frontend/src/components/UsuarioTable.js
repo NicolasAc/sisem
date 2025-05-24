@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { useNavigate } from 'react-router-dom';
-import { BsPencilSquare , BsPlusCircle  } from 'react-icons/bs';
+import { BsPencilSquare , BsPlusCircle,BsPersonXFill,BsEnvelopeArrowUpFill,BsKeyFill  } from 'react-icons/bs';
 
 const UsuarioTable = ({ usuarios }) => {
   const [filtro, setFiltro] = useState('');
@@ -10,6 +10,29 @@ const UsuarioTable = ({ usuarios }) => {
     const capitalizar = (texto) =>
       texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
 
+
+  const toggleEstadoUsuario = (usuario) => {
+    // Lógica para cambiar el estado del usuario (activo/deshabilitado)
+    console.log(`Cambiar estado del usuario con ID ${usuario.id}`);
+    // Ejemplo: await usuarioService.toggleEstado(usuario.id);
+  };
+
+  const reenviarCorreoActivacion = (id) => {
+    // Lógica para reenviar el correo
+    console.log(`Reenviar correo de activación al usuario con ID ${id}`);
+    // Ejemplo: await usuarioService.reenviarCorreo(id);
+  };
+
+  const confirmarCambioPassword = (usuario) => {
+    const confirmado = window.confirm(
+      `Se enviará un enlace a ${usuario.email} para que ${usuario.nombre} ${usuario.apellido} pueda establecer una nueva contraseña. ¿Desea continuar con el envío del correo?`
+    );
+
+    if (confirmado) {
+      reenviarCorreoActivacion(usuario);
+    }
+  };
+
   const columnas = [
     { name: 'Usuario', selector: row => row.username, sortable: true },
       { name: 'N° CCJPU', selector: row => row.nroCcjpu || '-', sortable: true },
@@ -17,22 +40,47 @@ const UsuarioTable = ({ usuarios }) => {
     { name: 'Apellido', selector: row => row.apellido, sortable: true },
     { name: 'Email', selector: row => row.email, sortable: true },
     { name: 'Eliminado', selector: row => capitalizar(row.estado), sortable: true },
-     {
-       name: 'Acciones',
-       center: true, // Centra el contenido de la celda
-       cell: row => (
-         <button
-           className="btn p-0 border-0 bg-transparent"
-           onClick={() => editarUsuario(row.id)}
-           title="Editar"
-         >
-           <BsPencilSquare size={20} style={{ color: '#0d6efd' }} />
-         </button>
-       ),
-       ignoreRowClick: true,
-       allowOverflow: true,
-       button: true,
-     }
+    {
+      name: 'Acciones',
+      center: true,
+      cell: row => (
+        <div className="d-flex justify-content-center align-items-center gap-2">
+          {/* Editar */}
+          <button
+            className="btn p-0 border-0 bg-transparent"
+            onClick={() => editarUsuario(row.id)}
+            title="Editar"
+          >
+            <BsPencilSquare size={20} style={{ color: '#0d6efd' }} />
+          </button>
+
+          {/* Deshabilitar/Habilitar */}
+          <button
+            className="btn p-0 border-0 bg-transparent"
+            onClick={() => toggleEstadoUsuario(row)}
+            title={row.estado.toLowerCase() === 'activo' ? 'Deshabilitar' : 'Habilitar'}
+          >
+            <BsPersonXFill
+              size={20}
+              style={{ color: row.estado.toLowerCase() === 'activo'? '#dc3545' : '#28a745' }}
+            />
+          </button>
+
+            {/* Cambio de contraseña */}
+            <button
+              className="btn p-0 border-0 bg-transparent"
+              onClick={() => confirmarCambioPassword(row)}
+              title="Enviar enlace para cambio de contraseña"
+            >
+              <BsKeyFill size={20} style={{ color: '#ffc107' }} />
+            </button>
+
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    }
   ];
 
     const editarUsuario = (id) => {

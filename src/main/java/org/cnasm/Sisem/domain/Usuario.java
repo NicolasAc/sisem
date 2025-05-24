@@ -47,6 +47,21 @@ public class Usuario {
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
+
+    // NOT NULL DEFAULT 0.
+    @Column(nullable = false)
+    private boolean cuentaBloqueada = false;
+
+    @Column(nullable = false)
+    private int intentosFallidos = 0;
+
+    private LocalDateTime ultimoIntentoFallido;
+
+    private LocalDateTime fechaBloqueo;
+
+    private String ipBloqueo;
+
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "usuarios_roles",
@@ -66,4 +81,6 @@ public class Usuario {
                 .map(rol -> rol.getNombre().toUpperCase())
                 .toList();
     }
+
+
 }

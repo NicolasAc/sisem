@@ -24,11 +24,16 @@ public class AuthenticationService {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    public String authenticate(String username, String password) {
+    public String authenticate(String username, String password,String ipCliente) {
         Usuario usuario = usuarioRepository.findByUsername(username);
 
         if (usuario == null) {
             throw new BadCredentialsException("Usuario o contraseña inválidos");
+        }
+
+
+        if (usuario.isCuentaBloqueada()) {
+            throw new DisabledException("La cuenta está bloqueada.");
         }
 
         if (usuario.getEstado() == EstadoUsuario.PENDIENTE) {
@@ -40,8 +45,31 @@ public class AuthenticationService {
         }
 
         if (!passwordEncoder.matches(password, usuario.getPassword())) {
+            int intentos = usuario.getIntentosFallidos() + 1;
+            usuario.setIntentosFallidos(intentos);
+            usuario.setUltimoIntentoFallido(java.time.LocalDateTime.now());
+
+
+            if (intentos >= 7) {
+                usuario.setCuentaBloqueada(true);
+                usuario.setFechaBloqueo(java.time.LocalDateTime.now());
+                usuario.setIpBloqueo(ipCliente);
+
+                usuarioRepository.save(usuario);
+                throw new BadCredentialsException("Cuenta bloqueada tras ingresar contraseña incorrecta en 7 intentos.. ");
+
+            }
+
+            usuarioRepository.save(usuario);
             throw new BadCredentialsException("Usuario o contraseña inválidos");
         }
+
+        // Login exitoso: resetear intentos
+        usuario.setIntentosFallidos(0);
+        usuario.setCuentaBloqueada(false);
+        usuario.setFechaBloqueo(null);
+        usuario.setIpBloqueo(null);
+        usuarioRepository.save(usuario);
 
         List<String> roles = usuario.getRoles().stream()
                 .map(r -> "ROLE_" + r.getNombre().toUpperCase())

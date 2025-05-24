@@ -1,5 +1,6 @@
 package org.cnasm.Sisem.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.cnasm.Sisem.security.CustomAccessDeniedHandler;
 import org.cnasm.Sisem.security.JwtRequestFilter;
 import org.springframework.context.annotation.Bean;
@@ -38,8 +39,12 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler));//Enviar un mensaje JSON en 403 (esta autenticado pero no habilitado por roles @PreAuthorize("hasRole('ADMINISTRADOR')") o .hasRole("ADMINISTRADOR")
-
+                .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler)//Enviar un mensaje JSON en 403 (esta autenticado pero no habilitado por roles @PreAuthorize("hasRole('ADMINISTRADOR')") o .hasRole("ADMINISTRADOR")
+                .authenticationEntryPoint((request, response, authException) -> {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Autenticación requerida. Por favor, inicie sesión.\"}");
+        }));
         return http.build();
     }
 
